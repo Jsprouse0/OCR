@@ -9,6 +9,7 @@ const ctx = canvas.getContext("2d");
 const clearBtn = document.getElementById("clearBtn");
 const predictBtn = document.getElementById("predictBtn");
 const trainBtn = document.getElementById("trainBtn");
+const trainAllBtn = document.getElementById("trainAllBtn");
 const labelInput = document.getElementById("labelInput");
 const statusEl = document.getElementById("status");
 const resultEl = document.getElementById("result");
@@ -163,7 +164,15 @@ async function predict() {
 		});
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const data = await res.json();
-		resultEl.textContent = `Prediction: ${data.digit}  (confidence: ${(data.confidence*100).toFixed(1)}%)`;
+		if (Array.isArray(data.probs)) {
+			// Sort top-3 predictions
+			const entries = data.probs.map((p, i) => ({ i, p }));
+			entries.sort((a, b) => b.p - a.p);
+			const top = entries.slice(0, 3).map(e => `${e.i}:${(e.p*100).toFixed(1)}%`).join("  ");
+			resultEl.textContent = `Prediction: ${data.digit}  (${(data.confidence*100).toFixed(1)}%)  |  top-3 ${top}`;
+		} else {
+			resultEl.textContent = `Prediction: ${data.digit}  (confidence: ${(data.confidence*100).toFixed(1)}%)`;
+		}
 	} catch (err) {
 		resultEl.textContent = `Error: ${err.message}`;
 	} finally {
@@ -187,7 +196,27 @@ async function train() {
 		});
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const data = await res.json();
-		resultEl.textContent = data.message || "Training sample stored.";
+		const extra = (typeof data.loss === 'number') ? `  loss=${data.loss.toFixed(3)}` : '';
+		const count = (typeof data.count === 'number') ? `  samples=${data.count}` : '';
+		resultEl.textContent = (data.message || "Training sample stored.") + extra + count;
+	} catch (err) {
+		resultEl.textContent = `Error: ${err.message}`;
+	} finally {
+		setStatus("");
+	}
+}
+
+async function trainAll() {
+	setStatus("Training over stored samples…");
+	try {
+		const res = await fetch(`${SERVER_URL}/api/train_all`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ epochs: 10 })
+		});
+		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		const data = await res.json();
+		resultEl.textContent = `${data.message}  epochs=${data.epochs}  avgLoss=${Number(data.avg_epoch_loss).toFixed(3)}  samples=${data.samples}`;
 	} catch (err) {
 		resultEl.textContent = `Error: ${err.message}`;
 	} finally {
@@ -212,6 +241,7 @@ function bindEvents() {
 	clearBtn.addEventListener("click", clearCanvas);
 	predictBtn.addEventListener("click", predict);
 	trainBtn.addEventListener("click", train);
+	trainAllBtn?.addEventListener("click", trainAll);
 	window.addEventListener("resize", () => {
 		resizeCanvas();
 	});
