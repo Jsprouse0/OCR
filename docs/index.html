@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OCR Predictor</title>
+    <link rel="stylesheet" href="ocr.css" />
+    <script>
+      // Set your API base here when using GitHub Pages (e.g., your public server URL)
+      // Example: window.OCR_API_URL = "https://your-domain.example.com";
+      // window.OCR_API_URL = "";
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <div class="brand" id="brand">
+      <button id="brandToggle" class="brand-btn" aria-haspopup="true" aria-expanded="false" aria-controls="dropdown">
+        OCR Predictor ▾
+      </button>
+      <div id="dropdown" class="dropdown card" hidden>
+        <div class="toolbar">
+          <button id="clearBtn" class="btn-ghost">Clear</button>
+          <button id="predictBtn" class="btn-primary">Predict</button>
+        </div>
+        <div class="toolbar">
+          <label>
+            Label (0-9):
+            <input id="labelInput" type="number" min="0" max="9" step="1" />
+          </label>
+          <button id="trainBtn" class="btn-success">Send Training Sample</button>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="result" id="result"></div>
+      </div>
+    </div>
+
+    <script src="ocr.js"></script>
+  </body>
+</html>
