@@ -1,6 +1,7 @@
 // Simple OCR client: full-screen canvas, send to server for train/predict
 
-const SERVER_URL = window.location.origin; // use same origin as the served HTML
+// API base URL; override on static hosting (e.g., GitHub Pages) by setting window.OCR_API_URL
+const SERVER_URL = ((window.OCR_API_URL || window.location.origin) + '').replace(/\/$/, '');
 
 // Canvas setup
 const canvas = document.getElementById("canvas");
