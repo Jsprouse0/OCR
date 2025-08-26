@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+		<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Simple OCR</title>
+			<link rel="stylesheet" href="/ui/ocr.css" />
+	</head>
+		<body>
+			<!-- Full-viewport drawing canvas -->
+			<canvas id="canvas"></canvas>
+
+				<!-- Top-right dropdown control -->
+				<div class="brand" id="brand">
+					<button id="brandToggle" class="brand-btn" aria-haspopup="true" aria-expanded="false" aria-controls="dropdown">
+						OCR Predictor ▾
+					</button>
+					<div id="dropdown" class="dropdown card" hidden>
+						<div class="toolbar">
+							<button id="clearBtn" class="btn-ghost">Clear</button>
+							<button id="predictBtn" class="btn-primary">Predict</button>
+						</div>
+						<div class="toolbar">
+							<label>
+								Label (0-9):
+								<input id="labelInput" type="number" min="0" max="9" step="1" />
+							</label>
+							<button id="trainBtn" class="btn-success">Send Training Sample</button>
+						</div>
+						<div class="status" id="status"></div>
+						<div class="result" id="result"></div>
+					</div>
+				</div>
+
+		<script src="/client/ocr.js"></script>
+	</body>
+	</html>
+
